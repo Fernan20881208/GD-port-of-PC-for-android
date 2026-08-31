@@ -1,5 +1,7 @@
 # GD PC Experience for Android
 
+[![Build Android64](https://github.com/Fernan20881208/GD-port-of-PC-for-android/actions/workflows/build.yml/badge.svg)](https://github.com/Fernan20881208/GD-port-of-PC-for-android/actions/workflows/build.yml)
+
 Mod de **Geode para Geometry Dash 2.2081 en Android ARM64** que acerca la experiencia de PC a Android sin intentar ejecutar el binario de Windows.
 
 > Estado: **v0.1.0 / base funcional**. No es todavía una copia exacta de todas las funciones del `.exe`.
@@ -67,4 +69,3 @@ Geometry Dash pertenece a RobTop Games. Geode y Custom Keybinds pertenecen a sus
 ## Siguiente etapa
 
 Consulta [docs/ROADMAP.md](docs/ROADMAP.md) y [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md). Los reportes útiles deben incluir modelo del dispositivo, versión de Android, versión de Geode y tipo de teclado/ratón.
-
