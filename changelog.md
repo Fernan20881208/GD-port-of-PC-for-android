@@ -1,3 +1,10 @@
+# v0.2.1
+
+- Corregido Unlock FPS para que aumentar los FPS no acelere la velocidad del juego.
+- El render de Android puede seguir usando 120 / 144 / 240 / 360 FPS.
+- La simulación de Geometry Dash usa `CCDirector::getActualDeltaTime()` como tiempo real independiente del intervalo de render.
+- Protección contra deltas inválidos o picos grandes al reanudar la aplicación.
+
 # v0.2.0
 
 - Nuevo menú de gráficos estilo PC dentro de los ajustes del mod.
