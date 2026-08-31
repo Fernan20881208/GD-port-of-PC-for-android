@@ -1,0 +1,29 @@
+# Build products
+build/
+bin/
+.cache/
+.idea/
+.vscode/
+compile_commands.json
+
+# Geode packages and native binaries
+*.geode
+*.so
+*.dll
+*.dylib
+*.exe
+*.apk
+
+# Game archives and proprietary assets must never enter this repository
+*.zip
+*.7z
+*.rar
+GeometryDash/
+Resources/
+resources/
+
+# Local diagnostics
+analysis/
+logs/
+*.log
+

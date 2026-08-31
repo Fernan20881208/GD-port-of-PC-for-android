@@ -1,0 +1,56 @@
+{
+    "geode": "5.10.1",
+    "gd": {
+        "android": "2.2081"
+    },
+    "id": "fernan20881208.gd-pc-android",
+    "name": "GD PC Experience for Android",
+    "version": "v0.1.0",
+    "developer": "Fernan20881208",
+    "description": "Capa Android para acercar la interfaz, entrada y diagnostico de Geometry Dash a la experiencia de PC.",
+    "links": {
+        "source": "https://github.com/Fernan20881208/GD-port-of-PC-for-android"
+    },
+    "dependencies": {
+        "geode.node-ids": ">=v1.23.3",
+        "geode.custom-keybinds": ">=v2.2.2"
+    },
+    "resources": {
+        "files": [
+            "about.md",
+            "changelog.md",
+            "support.md"
+        ]
+    },
+    "settings": {
+        "interface-title": {
+            "name": "Interfaz de PC",
+            "description": "Opciones visuales para teclado, raton y mando.",
+            "type": "title"
+        },
+        "adaptive-touch-ui": {
+            "name": "Controles tactiles adaptativos",
+            "description": "Oculta los controles tactiles al detectar teclado, raton o mando y los recupera al tocar la pantalla.",
+            "type": "bool",
+            "default": true
+        },
+        "always-hide-touch-ui": {
+            "name": "Ocultar siempre controles tactiles",
+            "description": "Modo PC estricto. Activalo solo si tienes un periferico conectado.",
+            "type": "bool",
+            "default": false
+        },
+        "performance-title": {
+            "name": "Rendimiento",
+            "description": "Medicion segura; no altera la velocidad de la fisica del juego.",
+            "type": "title"
+        },
+        "show-fps": {
+            "name": "Mostrar FPS y frametime",
+            "description": "Muestra FPS reales y milisegundos por fotograma durante juego y editor.",
+            "type": "bool",
+            "default": true
+        }
+    }
+}
+
