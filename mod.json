@@ -5,15 +5,14 @@
     },
     "id": "fernan20881208.gd-pc-android",
     "name": "GD PC Experience for Android",
-    "version": "v0.1.0",
+    "version": "v0.1.1",
     "developer": "Fernan20881208",
-    "description": "Capa Android para acercar la interfaz, entrada y diagnostico de Geometry Dash a la experiencia de PC.",
+    "description": "PC-style controls and UI for Android GD.",
     "links": {
         "source": "https://github.com/Fernan20881208/GD-port-of-PC-for-android"
     },
     "dependencies": {
-        "geode.node-ids": ">=v1.23.3",
-        "geode.custom-keybinds": ">=v2.2.2"
+        "geode.node-ids": ">=v1.23.3"
     },
     "resources": {
         "files": [
@@ -53,4 +52,3 @@
         }
     }
 }
-
