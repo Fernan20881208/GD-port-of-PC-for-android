@@ -1,4 +1,5 @@
 #include "PCPortPopup.hpp"
+#include "GraphicsController.hpp"
 
 #include <Geode/binding/ButtonSprite.hpp>
 #include <Geode/loader/Loader.hpp>
@@ -56,11 +57,11 @@ bool PCPortPopup::init() {
     m_performanceStatus = addStatusRow(m_mainLayer, "Rendimiento: midiendo...", 103.f);
 
     auto note = CCLabelBMFont::create(
-        "Clic y rueda usan el puente de Geode; los atajos\ncompletos se configuran en Custom Keybinds.",
+        GraphicsController::statusText().c_str(),
         "chatFont.fnt"
     );
     note->setAlignment(kCCTextAlignmentCenter);
-    note->setScale(.58f);
+    note->setScale(.54f);
     note->setColor({ 210, 225, 255 });
     note->setPosition({ m_size.width / 2.f, 73.f });
     m_mainLayer->addChild(note);
@@ -71,7 +72,7 @@ bool PCPortPopup::init() {
     );
     addButton(
         m_buttonMenu, this, menu_selector(PCPortPopup::onSettings),
-        "Opciones", { 0.f, -102.f }
+        "Graficos", { 0.f, -102.f }
     );
     addButton(
         m_buttonMenu, this, menu_selector(PCPortPopup::onRoadmap),
@@ -139,18 +140,26 @@ void PCPortPopup::onKeybinds(CCObject*) {
     auto keybinds = Loader::get()->getInstalledMod("geode.custom-keybinds");
     if (keybinds) {
         openKeybindsPopup(std::nullopt, keybinds);
+        return;
     }
+
+    createQuickPopup(
+        "Teclas",
+        "Custom Keybinds no esta instalado. El soporte basico de teclado, raton y rueda del mod sigue activo.",
+        "OK", nullptr, [](FLAlertLayer*, bool) {}
+    );
 }
 
 void PCPortPopup::onSettings(CCObject*) {
+    GraphicsController::applyAll();
     openSettingsPopup(Mod::get());
 }
 
 void PCPortPopup::onRoadmap(CCObject*) {
     createQuickPopup(
         "Estado de compatibilidad",
-        "<cg>Listo:</c> teclado, clic, rueda, atajos de juego/editor, HUD y controles adaptativos.\n\n"
-        "<cy>En desarrollo:</c> cursor con hover, captura relativa del raton y equivalentes Android de las opciones avanzadas de video de PC.",
+        "<cg>Listo:</c> Fullscreen Android, Texture Quality, VSync EGL, Smooth Fix, Show FPS, Unlock FPS, objetivo personalizado, teclado, clic, rueda y controles adaptativos.\n\n"
+        "<cy>No aplica igual que Windows:</c> Borderless, Windowed y resolucion de ventana. Android conserva su superficie fullscreen nativa.",
         "OK", nullptr, [](FLAlertLayer*, bool) {}
     );
 }
