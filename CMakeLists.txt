@@ -19,7 +19,9 @@ setup_geode_mod(${PROJECT_NAME})
 if (ANDROID)
     find_library(EGL_LIBRARY EGL)
     if (EGL_LIBRARY)
-        target_link_libraries(${PROJECT_NAME} PRIVATE ${EGL_LIBRARY})
+        # setup_geode_mod uses the plain target_link_libraries signature,
+        # so keep this call plain as well.
+        target_link_libraries(${PROJECT_NAME} ${EGL_LIBRARY})
     else()
         message(FATAL_ERROR "Android EGL library not found; required for VSync control")
     endif()
