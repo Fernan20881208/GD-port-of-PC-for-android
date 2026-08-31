@@ -5,7 +5,7 @@
     },
     "id": "fernan20881208.gd-pc-android",
     "name": "GD PC Experience for Android",
-    "version": "v0.1.1",
+    "version": "v0.2.0",
     "developer": "Fernan20881208",
     "description": "PC-style controls and UI for Android GD.",
     "links": {
@@ -39,16 +39,80 @@
             "type": "bool",
             "default": false
         },
-        "performance-title": {
-            "name": "Rendimiento",
-            "description": "Medicion segura; no altera la velocidad de la fisica del juego.",
+        "graphics-title": {
+            "name": "Graficos de escritorio",
+            "description": "Equivalentes Android del menu Graphics de Steam.",
             "type": "title"
         },
+        "display-mode-info": {
+            "name": "Fullscreen: activo en Android",
+            "description": "Android ya ejecuta GD como app fullscreen. Borderless y Windowed no tienen un equivalente real de ventana.",
+            "type": "title"
+        },
+        "resolution-info": {
+            "name": "Resolucion: superficie Android",
+            "description": "Los presets de ventana 640x480 a 1920x1080 de Windows no cambian una ventana en Android; se conserva la superficie nativa del dispositivo.",
+            "type": "title"
+        },
+        "texture-quality": {
+            "name": "Texture Quality",
+            "description": "Selecciona Low, Medium, High o Auto usando el escalado de contenido de Geometry Dash.",
+            "type": "string",
+            "default": "Auto",
+            "one-of": [
+                "Auto",
+                "Low",
+                "Medium",
+                "High"
+            ]
+        },
+        "advanced-graphics-title": {
+            "name": "Graficos avanzados",
+            "description": "VSync, Smooth Fix y control de FPS al estilo PC.",
+            "type": "title"
+        },
+        "vertical-sync": {
+            "name": "Vertical Sync",
+            "description": "Usa eglSwapInterval. Desactivado intenta liberar el render del VSync de EGL; algunos drivers/compositores pueden seguir limitandolo.",
+            "type": "bool",
+            "default": false
+        },
+        "smooth-fix": {
+            "name": "Smooth Fix",
+            "description": "Activa la ruta Smooth Fix incluida en el director de Geometry Dash durante juego y editor.",
+            "type": "bool",
+            "default": false
+        },
         "show-fps": {
-            "name": "Mostrar FPS y frametime",
+            "name": "Show FPS",
             "description": "Muestra FPS reales y milisegundos por fotograma durante juego y editor.",
             "type": "bool",
             "default": true
+        },
+        "unlock-fps": {
+            "name": "Unlock FPS",
+            "description": "Permite usar un objetivo de FPS personalizado. VSync tiene prioridad cuando esta activo.",
+            "type": "bool",
+            "default": true,
+            "enable-if": "!vertical-sync"
+        },
+        "target-fps": {
+            "name": "FPS objetivo",
+            "description": "Objetivo personalizado del bucle de render de Android.",
+            "type": "int",
+            "default": 120,
+            "min": 30,
+            "max": 360,
+            "enable-if": "unlock-fps && !vertical-sync",
+            "control": {
+                "arrows": true,
+                "arrow-step": 1,
+                "big-arrows": true,
+                "big-arrow-step": 30,
+                "slider": true,
+                "slider-step": 30,
+                "input": true
+            }
         }
     }
 }
