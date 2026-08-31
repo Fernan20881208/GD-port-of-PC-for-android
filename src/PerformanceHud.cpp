@@ -19,6 +19,10 @@ bool PerformanceHud::init() {
 }
 
 void PerformanceHud::update(float dt) {
+    if (Mod::get()->getSettingValue<bool>("smooth-fix")) {
+        CCDirector::sharedDirector()->applySmoothFix();
+    }
+
     auto const visible = Mod::get()->getSettingValue<bool>("show-fps");
     m_label->setVisible(visible);
     if (!visible || !std::isfinite(dt) || dt <= 0.f || dt > .5f) {
@@ -46,4 +50,3 @@ PerformanceHud* PerformanceHud::create() {
     delete ret;
     return nullptr;
 }
-
