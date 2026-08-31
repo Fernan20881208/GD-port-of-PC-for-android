@@ -1,3 +1,4 @@
+#include "GraphicsController.hpp"
 #include "PCPortPopup.hpp"
 #include "PerformanceHud.hpp"
 
@@ -43,6 +44,10 @@ class $modify(PCMenuLayer, MenuLayer) {
             return false;
         }
 
+        // MenuLayer runs with an active EGL context, so this is a safe point to
+        // apply the Android equivalents of the desktop graphics options.
+        GraphicsController::applyAll();
+
         auto menu = this->getChildByID("bottom-menu");
         if (!menu) {
             log::warn("No se encontro bottom-menu; se omite el boton PC");
@@ -72,6 +77,8 @@ class $modify(PCPlayLayer, PlayLayer) {
         if (!PlayLayer::init(level, useReplay, dontCreateObjects)) {
             return false;
         }
+        GraphicsController::applyVSync();
+        GraphicsController::applyFrameRate();
         attachPerformanceHud(this);
         return true;
     }
@@ -82,6 +89,8 @@ class $modify(PCLevelEditorLayer, LevelEditorLayer) {
         if (!LevelEditorLayer::init(level, noUI)) {
             return false;
         }
+        GraphicsController::applyVSync();
+        GraphicsController::applyFrameRate();
         attachPerformanceHud(this);
         return true;
     }
