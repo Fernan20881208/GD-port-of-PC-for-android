@@ -16,8 +16,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Parse mod.json
-        run: python -m json.tool mod.json > /dev/null
+      - name: Validate mod.json
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          data = json.loads(Path('mod.json').read_text(encoding='utf-8'))
+          required = ['geode', 'gd', 'id', 'name', 'version', 'developer']
+          missing = [key for key in required if key not in data]
+          if missing:
+              raise SystemExit(f'Missing required mod.json keys: {missing}')
+          if len(data.get('description', '')) > 45:
+              raise SystemExit('mod.json description must be 45 characters or fewer')
+          if data['gd'].get('android') != '2.2081':
+              raise SystemExit('Android GD target must be 2.2081')
+          print('mod.json metadata looks valid')
+          PY
 
   build:
     name: Android64
@@ -42,13 +59,41 @@ jobs:
           name: geode-build-android64
           path: package
 
-      - name: Verify package
+      - name: Validate generated .geode
         shell: bash
         run: |
           set -euo pipefail
-          echo "Downloaded files:"
-          find package -maxdepth 2 -type f -print
-          test -n "$(find package -type f -name '*.geode' -print -quit)"
+          python - <<'PY'
+          import json
+          import zipfile
+          from pathlib import Path
+
+          files = list(Path('package').glob('*.geode'))
+          if len(files) != 1:
+              raise SystemExit(f'Expected exactly one .geode file, found {len(files)}')
+
+          package = files[0]
+          with zipfile.ZipFile(package, 'r') as zf:
+              bad = zf.testzip()
+              if bad:
+                  raise SystemExit(f'Corrupt ZIP entry: {bad}')
+
+              names = set(zf.namelist())
+              if 'mod.json' not in names:
+                  raise SystemExit('Generated .geode is missing mod.json')
+
+              metadata = json.loads(zf.read('mod.json').decode('utf-8'))
+              mod_id = metadata['id']
+              binary = f'{mod_id}.android64.so'
+              if binary not in names:
+                  raise SystemExit(f'Generated .geode is missing {binary}')
+              if len(metadata.get('description', '')) > 45:
+                  raise SystemExit('Packaged mod.json description exceeds 45 characters')
+              if metadata.get('gd', {}).get('android') != '2.2081':
+                  raise SystemExit('Packaged mod.json has the wrong Android GD target')
+
+              print(f'Validated {package}: {len(names)} entries, binary {binary}')
+          PY
 
       - name: Upload package
         uses: actions/upload-artifact@v4
