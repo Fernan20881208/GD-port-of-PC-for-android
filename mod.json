@@ -7,10 +7,10 @@
     "id": "fernan20881208.gd-pc-android",
     "name": "PC-FPS-MOD",
     "version": "v0.3.0",
-    "developer": "Fernan20881208",
+    "developer": "Zaid Navarro",
     "description": "PC controls and strict FPS tools for GD.",
     "links": {
-        "source": "https://github.com/Fernan20881208/PC-FPS-MOD"
+        "source": "https://github.com/Fernan20881208/GD-port-of-PC-for-android"
     },
     "dependencies": {
         "geode.node-ids": ">=v1.23.3"
