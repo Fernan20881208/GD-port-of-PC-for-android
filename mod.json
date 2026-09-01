@@ -5,7 +5,7 @@
     },
     "id": "fernan20881208.gd-pc-android",
     "name": "GD PC Experience for Android",
-    "version": "v0.2.1",
+    "version": "v0.2.2",
     "developer": "Fernan20881208",
     "description": "PC-style controls and UI for Android GD.",
     "links": {
@@ -98,7 +98,7 @@
         },
         "target-fps": {
             "name": "FPS objetivo",
-            "description": "Objetivo del render Android; la velocidad de juego permanece ligada al tiempo real.",
+            "description": "Limite maximo estricto del render Android; la velocidad de juego permanece ligada al tiempo real.",
             "type": "int",
             "default": 120,
             "min": 30,
