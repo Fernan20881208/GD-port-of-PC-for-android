@@ -1,15 +1,16 @@
 {
     "geode": "5.10.1",
     "gd": {
-        "android": "2.2081"
+        "android": "2.2081",
+        "ios": "2.2081"
     },
     "id": "fernan20881208.gd-pc-android",
-    "name": "GD PC Experience for Android",
-    "version": "v0.2.2",
+    "name": "PC-FPS-MOD",
+    "version": "v0.3.0",
     "developer": "Fernan20881208",
-    "description": "PC-style controls and UI for Android GD.",
+    "description": "PC controls and strict FPS tools for GD.",
     "links": {
-        "source": "https://github.com/Fernan20881208/GD-port-of-PC-for-android"
+        "source": "https://github.com/Fernan20881208/PC-FPS-MOD"
     },
     "dependencies": {
         "geode.node-ids": ">=v1.23.3"
@@ -29,7 +30,7 @@
         },
         "adaptive-touch-ui": {
             "name": "Controles tactiles adaptativos",
-            "description": "Oculta los controles tactiles al detectar teclado, raton o mando y los recupera al tocar la pantalla.",
+            "description": "En Android, oculta los controles tactiles al detectar teclado, raton o mando y los recupera al tocar la pantalla.",
             "type": "bool",
             "default": true
         },
@@ -41,17 +42,17 @@
         },
         "graphics-title": {
             "name": "Graficos de escritorio",
-            "description": "Equivalentes Android del menu Graphics de Steam.",
+            "description": "Equivalentes moviles del menu Graphics de Steam.",
             "type": "title"
         },
         "display-mode-info": {
-            "name": "Fullscreen: activo en Android",
-            "description": "Android ya ejecuta GD como app fullscreen. Borderless y Windowed no tienen un equivalente real de ventana.",
+            "name": "Fullscreen movil: activo",
+            "description": "Android e iOS ejecutan GD como app fullscreen. Borderless y Windowed no tienen un equivalente real de ventana.",
             "type": "title"
         },
         "resolution-info": {
-            "name": "Resolucion: superficie Android",
-            "description": "Los presets de ventana 640x480 a 1920x1080 de Windows no cambian una ventana en Android; se conserva la superficie nativa del dispositivo.",
+            "name": "Resolucion: superficie movil",
+            "description": "Los presets de ventana de Windows no cambian una ventana en Android o iOS; se conserva la superficie nativa.",
             "type": "title"
         },
         "texture-quality": {
@@ -73,7 +74,7 @@
         },
         "vertical-sync": {
             "name": "Vertical Sync",
-            "description": "Usa eglSwapInterval. Desactivado intenta liberar el render del VSync de EGL; algunos drivers/compositores pueden seguir limitandolo.",
+            "description": "Android usa EGL. iOS conserva la sincronizacion de CADisplayLink controlada por el sistema.",
             "type": "bool",
             "default": false
         },
@@ -91,14 +92,14 @@
         },
         "unlock-fps": {
             "name": "Unlock FPS",
-            "description": "Desbloquea el render sin acelerar la simulacion del juego. VSync tiene prioridad cuando esta activo.",
+            "description": "Controla el render sin acelerar la simulacion. VSync tiene prioridad cuando esta activo.",
             "type": "bool",
             "default": true,
             "enable-if": "!vertical-sync"
         },
         "target-fps": {
             "name": "FPS objetivo",
-            "description": "Limite maximo estricto del render Android; la velocidad de juego permanece ligada al tiempo real.",
+            "description": "Limite maximo estricto del render; la velocidad del juego permanece ligada al tiempo real.",
             "type": "int",
             "default": 120,
             "min": 30,

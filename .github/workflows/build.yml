@@ -1,4 +1,4 @@
-name: Build Android64
+name: Build PC-FPS-MOD
 
 on:
   workflow_dispatch:
@@ -29,75 +29,102 @@ jobs:
           missing = [key for key in required if key not in data]
           if missing:
               raise SystemExit(f'Missing required mod.json keys: {missing}')
+          if data['name'] != 'PC-FPS-MOD':
+              raise SystemExit('The public mod name must be PC-FPS-MOD')
           if len(data.get('description', '')) > 45:
               raise SystemExit('mod.json description must be 45 characters or fewer')
-          if data['gd'].get('android') != '2.2081':
-              raise SystemExit('Android GD target must be 2.2081')
-          print('mod.json metadata looks valid')
+          for platform in ('android', 'ios'):
+              if data['gd'].get(platform) != '2.2081':
+                  raise SystemExit(f'{platform} GD target must be 2.2081')
+          print('mod.json metadata looks valid for Android64 and iOS')
           PY
 
   build:
-    name: Android64
-    runs-on: ubuntu-latest
+    name: ${{ matrix.config.name }}
     needs: validate
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - name: Android64
+            os: ubuntu-latest
+            target: Android64
+            artifact: geode-build-android64
+          - name: iOS arm64
+            os: macos-latest
+            target: iOS
+            artifact: geode-build-ios
+    runs-on: ${{ matrix.config.os }}
     steps:
       - uses: actions/checkout@v4
       - name: Build Geode mod
+        id: build
         uses: geode-sdk/build-geode-mod@main
         with:
-          target: Android64
-          combine: true
+          sdk: "5.10.1"
+          build-config: Release
+          target: ${{ matrix.config.target }}
+          combine: false
+      - name: Upload platform package
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.config.artifact }}
+          path: ${{ steps.build.outputs.build-output }}
+          if-no-files-found: error
 
   package:
-    name: Package .geode
+    name: Validate and combine packages
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      contents: read
+      actions: write
     steps:
-      - name: Download Android64 build output
-        uses: actions/download-artifact@v4
-        with:
-          name: geode-build-android64
-          path: package
-
-      - name: Validate generated .geode
+      - uses: geode-sdk/build-geode-mod/combine@main
+        id: combine
+      - name: Validate universal .geode
         shell: bash
+        env:
+          PACKAGE_PATH: ${{ steps.combine.outputs.build-output }}
         run: |
           set -euo pipefail
           python - <<'PY'
           import json
+          import os
           import zipfile
           from pathlib import Path
 
-          files = list(Path('package').glob('*.geode'))
-          if len(files) != 1:
-              raise SystemExit(f'Expected exactly one .geode file, found {len(files)}')
+          output = Path(os.environ['PACKAGE_PATH'])
+          candidates = [output] if output.is_file() else list(output.rglob('*.geode'))
+          if len(candidates) != 1:
+              raise SystemExit(f'Expected exactly one combined .geode, found {len(candidates)}')
 
-          package = files[0]
+          package = candidates[0]
           with zipfile.ZipFile(package, 'r') as zf:
               bad = zf.testzip()
               if bad:
                   raise SystemExit(f'Corrupt ZIP entry: {bad}')
-
               names = set(zf.namelist())
-              if 'mod.json' not in names:
-                  raise SystemExit('Generated .geode is missing mod.json')
-
               metadata = json.loads(zf.read('mod.json').decode('utf-8'))
               mod_id = metadata['id']
-              binary = f'{mod_id}.android64.so'
-              if binary not in names:
-                  raise SystemExit(f'Generated .geode is missing {binary}')
-              if len(metadata.get('description', '')) > 45:
-                  raise SystemExit('Packaged mod.json description exceeds 45 characters')
+              expected = {
+                  f'{mod_id}.android64.so',
+                  f'{mod_id}.ios.dylib',
+              }
+              missing = sorted(expected - names)
+              if missing:
+                  raise SystemExit(f'Combined package is missing: {missing}')
+              if metadata.get('name') != 'PC-FPS-MOD':
+                  raise SystemExit('Combined package has the wrong public name')
               if metadata.get('gd', {}).get('android') != '2.2081':
-                  raise SystemExit('Packaged mod.json has the wrong Android GD target')
-
-              print(f'Validated {package}: {len(names)} entries, binary {binary}')
+                  raise SystemExit('Combined package has the wrong Android target')
+              if metadata.get('gd', {}).get('ios') != '2.2081':
+                  raise SystemExit('Combined package has the wrong iOS target')
+              print(f'Validated {package}: Android64 + iOS arm64')
           PY
-
-      - name: Upload package
+      - name: Upload universal package
         uses: actions/upload-artifact@v4
         with:
-          name: GD-PC-Experience-Android64
-          path: package/*.geode
+          name: PC-FPS-MOD-Android64-iOS
+          path: ${{ steps.combine.outputs.build-output }}
           if-no-files-found: error

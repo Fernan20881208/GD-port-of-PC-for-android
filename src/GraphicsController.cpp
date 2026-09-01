@@ -2,8 +2,13 @@
 
 #include <Geode/Geode.hpp>
 #include <Geode/loader/SettingV3.hpp>
+
+#ifdef GEODE_IS_ANDROID
 #include <Geode/cocos/platform/android/CCApplication.h>
 #include <EGL/egl.h>
+#elif defined(GEODE_IS_IOS)
+#include <Geode/cocos/platform/ios/CCApplication.h>
+#endif
 
 #include <algorithm>
 #include <cmath>
@@ -44,13 +49,22 @@ namespace {
         }
         return kTextureQualityLow;
     }
+
+    char const* platformName() {
+#ifdef GEODE_IS_IOS
+        return "iOS";
+#else
+        return "Android";
+#endif
+    }
 }
 
 void GraphicsController::applyVSync() {
     auto const enabled = Mod::get()->getSettingValue<bool>("vertical-sync");
-    auto const display = eglGetCurrentDisplay();
-
     s_vsyncAttempted = true;
+
+#ifdef GEODE_IS_ANDROID
+    auto const display = eglGetCurrentDisplay();
     if (display == EGL_NO_DISPLAY) {
         s_vsyncSucceeded = false;
         log::warn("VSync: no hay EGLDisplay actual; se reintentara cuando exista un contexto grafico");
@@ -62,8 +76,20 @@ void GraphicsController::applyVSync() {
         log::info("VSync Android solicitado: {}", enabled ? "ON" : "OFF");
     }
     else {
-        log::warn("eglSwapInterval rechazo el cambio de VSync; el compositor/controlador puede estar forzandolo");
+        log::warn("eglSwapInterval rechazo el cambio de VSync; el compositor puede estar forzandolo");
     }
+#elif defined(GEODE_IS_IOS)
+    // iOS presents through CADisplayLink and does not expose an EGL-style switch
+    // to disable physical display synchronization. The requested frame interval
+    // and our strict frame limiter still control the maximum render cadence.
+    s_vsyncSucceeded = enabled;
+    if (enabled) {
+        log::info("VSync iOS: CADisplayLink conserva la sincronizacion del sistema");
+    }
+    else {
+        log::info("VSync iOS OFF solicitado; CADisplayLink puede seguir sincronizando la presentacion fisica");
+    }
+#endif
 }
 
 void GraphicsController::applyFrameRate() {
@@ -90,7 +116,8 @@ void GraphicsController::applyFrameRate() {
     if (auto* app = CCApplication::sharedApplication()) {
         app->setAnimationInterval(interval);
         log::info(
-            "Frame target Android: {:.2f} FPS{}",
+            "Frame target {}: {:.2f} FPS{}",
+            platformName(),
             1.0 / interval,
             vsync ? " (VSync tiene prioridad)" : ""
         );
@@ -128,9 +155,10 @@ std::string GraphicsController::statusText() {
     auto const unlock = Mod::get()->getSettingValue<bool>("unlock-fps");
 
     return fmt::format(
-        "Fullscreen Android | VSync {}{} | FPS {}",
+        "Fullscreen {} | VSync {}{} | FPS {}",
+        platformName(),
         vsync ? "ON" : "OFF",
-        s_vsyncAttempted ? (s_vsyncSucceeded ? "" : " (driver)") : " (?)",
+        s_vsyncAttempted ? (s_vsyncSucceeded ? "" : " (sistema)") : " (?)",
         (!vsync && unlock) ? std::to_string(targetFPS()) : "sistema"
     );
 }

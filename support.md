@@ -2,11 +2,12 @@
 
 Abre un issue en el repositorio e incluye:
 
-- Modelo del dispositivo y versión de Android.
-- Versión exacta de Geometry Dash y Geode.
-- Tipo/modelo de teclado, ratón o mando.
-- Pasos para reproducir el problema.
+- Plataforma: Android64 o iOS arm64.
+- Modelo del dispositivo y versión del sistema operativo.
+- Versión exacta de Geometry Dash, Geode y PC-FPS-MOD.
+- FPS objetivo, frecuencia de la pantalla y estado de VSync/Unlock FPS.
+- Tipo y modelo de teclado, ratón o mando, si el problema está relacionado con entrada.
+- Pasos exactos para reproducir el problema.
 - `Geode/logs/latest.log`, retirando cualquier dato personal antes de publicarlo.
 
-No adjuntes APK, EXE, DLL, SO, música ni recursos originales del juego.
-
+No adjuntes APK, IPA, EXE, DLL, SO, música ni recursos originales del juego.

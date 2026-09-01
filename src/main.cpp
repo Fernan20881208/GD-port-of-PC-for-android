@@ -7,13 +7,16 @@
 #include <Geode/modify/MenuLayer.hpp>
 #include <Geode/modify/PlayLayer.hpp>
 #include <Geode/modify/UILayer.hpp>
-#include <Geode/utils/AndroidEvent.hpp>
 
+#ifdef GEODE_IS_ANDROID
+#include <Geode/utils/AndroidEvent.hpp>
 #include <variant>
+#endif
 
 using namespace geode::prelude;
 
 namespace {
+#ifdef GEODE_IS_ANDROID
     constexpr int kAndroidSourceMouse = 0x00002002;
     constexpr int kAndroidSourceMouseRelative = 0x00020004;
 
@@ -21,6 +24,7 @@ namespace {
         return (source & kAndroidSourceMouse) == kAndroidSourceMouse ||
             (source & kAndroidSourceMouseRelative) == kAndroidSourceMouseRelative;
     }
+#endif
 
     void attachPerformanceHud(GJBaseGameLayer* layer) {
         if (!layer || !layer->m_uiLayer) {
@@ -44,8 +48,7 @@ class $modify(PCMenuLayer, MenuLayer) {
             return false;
         }
 
-        // MenuLayer runs with an active EGL context, so this is a safe point to
-        // apply the Android equivalents of the desktop graphics options.
+        // The menu runs with an active graphics context on both mobile targets.
         GraphicsController::applyAll();
 
         auto menu = this->getChildByID("bottom-menu");
@@ -111,6 +114,7 @@ class $modify(PCUILayer, UILayer) {
             this->setDesktopInput(true);
         }
 
+#ifdef GEODE_IS_ANDROID
         this->addEventListener(AndroidRichInputEvent(), [this](
             int64_t, int, int source, AndroidRichInput input
         ) {
@@ -136,6 +140,7 @@ class $modify(PCUILayer, UILayer) {
             }
             return ListenerResult::Propagate;
         });
+#endif
 
         return true;
     }

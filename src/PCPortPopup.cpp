@@ -4,11 +4,14 @@
 #include <Geode/binding/ButtonSprite.hpp>
 #include <Geode/loader/Loader.hpp>
 #include <Geode/ui/GeodeUI.hpp>
-#include <Geode/utils/AndroidEvent.hpp>
 #include <Geode/utils/Keyboard.hpp>
 
-#include <cmath>
+#ifdef GEODE_IS_ANDROID
+#include <Geode/utils/AndroidEvent.hpp>
 #include <variant>
+#endif
+
+#include <cmath>
 
 using namespace geode::prelude;
 
@@ -36,6 +39,14 @@ namespace {
         menu->addChild(button);
         return button;
     }
+
+    char const* platformName() {
+#ifdef GEODE_IS_IOS
+        return "iOS";
+#else
+        return "Android";
+#endif
+    }
 }
 
 bool PCPortPopup::init() {
@@ -44,7 +55,7 @@ bool PCPortPopup::init() {
     }
 
     m_noElasticity = true;
-    this->setTitle("PC Experience - Android");
+    this->setTitle(fmt::format("PC-FPS-MOD - {}", platformName()).c_str());
 
     auto subtitle = CCLabelBMFont::create("Diagnostico en vivo", "goldFont.fnt");
     subtitle->setScale(.45f);
@@ -52,7 +63,7 @@ bool PCPortPopup::init() {
     m_mainLayer->addChild(subtitle);
 
     m_keyboardStatus = addStatusRow(m_mainLayer, "Teclado: esperando una tecla", 183.f);
-    m_pointerStatus = addStatusRow(m_mainLayer, "Raton / tactil: esperando entrada", 158.f);
+    m_pointerStatus = addStatusRow(m_mainLayer, "Puntero / tactil: esperando entrada", 158.f);
     m_scrollStatus = addStatusRow(m_mainLayer, "Rueda: esperando desplazamiento", 133.f);
     m_performanceStatus = addStatusRow(m_mainLayer, "Rendimiento: midiendo...", 103.f);
 
@@ -95,6 +106,7 @@ bool PCPortPopup::init() {
         return ListenerResult::Propagate;
     });
 
+#ifdef GEODE_IS_ANDROID
     this->addEventListener(AndroidRichInputEvent(), [this](
         int64_t, int deviceID, int source, AndroidRichInput input
     ) {
@@ -112,6 +124,10 @@ bool PCPortPopup::init() {
         }
         return ListenerResult::Propagate;
     });
+#else
+    m_pointerStatus->setString("Puntero / tactil: gestionado por iOS");
+    m_pointerStatus->setColor({ 210, 225, 255 });
+#endif
 
     this->scheduleUpdate();
     return true;
@@ -145,7 +161,7 @@ void PCPortPopup::onKeybinds(CCObject*) {
 
     createQuickPopup(
         "Teclas",
-        "Custom Keybinds no esta instalado. El soporte basico de teclado, raton y rueda del mod sigue activo.",
+        "Custom Keybinds no esta instalado. El soporte basico de entrada del mod sigue activo.",
         "OK", nullptr, [](FLAlertLayer*, bool) {}
     );
 }
@@ -156,10 +172,18 @@ void PCPortPopup::onSettings(CCObject*) {
 }
 
 void PCPortPopup::onRoadmap(CCObject*) {
+#ifdef GEODE_IS_IOS
+    auto const message =
+        "<cg>Listo:</c> Texture Quality, Smooth Fix, Show FPS, limite personalizado y tiempo de juego independiente.\n\n"
+        "<cy>iOS:</c> CADisplayLink conserva la sincronizacion fisica del sistema; la build es un mod .geode arm64, no una IPA.";
+#else
+    auto const message =
+        "<cg>Listo:</c> Fullscreen Android, Texture Quality, VSync EGL, Smooth Fix, Show FPS, limite personalizado, teclado, clic, rueda y controles adaptativos.\n\n"
+        "<cy>No aplica igual que Windows:</c> Borderless, Windowed y resolucion de ventana.";
+#endif
     createQuickPopup(
         "Estado de compatibilidad",
-        "<cg>Listo:</c> Fullscreen Android, Texture Quality, VSync EGL, Smooth Fix, Show FPS, Unlock FPS, objetivo personalizado, teclado, clic, rueda y controles adaptativos.\n\n"
-        "<cy>No aplica igual que Windows:</c> Borderless, Windowed y resolucion de ventana. Android conserva su superficie fullscreen nativa.",
+        message,
         "OK", nullptr, [](FLAlertLayer*, bool) {}
     );
 }
