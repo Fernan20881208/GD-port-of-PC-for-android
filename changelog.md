@@ -1,3 +1,10 @@
+# v0.2.2
+
+- El FPS objetivo ahora funciona como limite maximo estricto y no solo como una solicitud al loop de Android.
+- Nuevo frame pacer monotónico en `CCDirector::drawScene` que impide renderizar antes del siguiente intervalo permitido.
+- Reinicio seguro de la cadencia al cambiar el objetivo, desactivar Unlock FPS, activar VSync o volver de una pausa.
+- Se conserva la separación entre render y tiempo real de gameplay introducida en v0.2.1.
+
 # v0.2.1
 
 - Corregido Unlock FPS para que aumentar los FPS no acelere la velocidad del juego.
