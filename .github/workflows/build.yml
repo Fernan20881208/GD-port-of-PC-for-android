@@ -50,10 +50,12 @@ jobs:
             os: ubuntu-latest
             target: Android64
             artifact: geode-build-android64
+            downloadable: PC-FPS-MOD-Android64
           - name: iOS arm64
             os: macos-latest
             target: iOS
             artifact: geode-build-ios
+            downloadable: PC-FPS-MOD-iOS-arm64
     runs-on: ${{ matrix.config.os }}
     steps:
       - uses: actions/checkout@v4
@@ -69,6 +71,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.config.artifact }}
+          path: ${{ steps.build.outputs.build-output }}
+          if-no-files-found: error
+      - name: Publish downloadable platform build
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.config.downloadable }}
           path: ${{ steps.build.outputs.build-output }}
           if-no-files-found: error
 

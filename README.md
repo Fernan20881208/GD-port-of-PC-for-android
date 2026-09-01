@@ -24,8 +24,8 @@ Cada ejecución correcta de GitHub Actions publica:
 
 | Artefacto | Plataforma | Contenido |
 |---|---|---|
-| `geode-build-android64` | Android ARM64-v8a | `.geode` con binario Android64 |
-| `geode-build-ios` | iPhone/iPad arm64 | `.geode` con binario iOS |
+| `PC-FPS-MOD-Android64` | Android ARM64-v8a | `.geode` con binario Android64 |
+| `PC-FPS-MOD-iOS-arm64` | iPhone/iPad arm64 | `.geode` con binario iOS |
 | `PC-FPS-MOD-Android64-iOS` | Universal | Un solo `.geode` con ambos binarios |
 
 La build de iOS es un **mod `.geode`**, no una IPA ni una copia de Geometry Dash. Requiere una instalación de Geode compatible en iOS.
